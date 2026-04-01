@@ -29,7 +29,8 @@ const char *password = "12345678";
 WebServer server(80);
 
 // LED pin
-const int ledPin = 23;
+const int RledPin = 23;
+const int GledPin = 4;
 
 // HTML page
 String htmlPage()
@@ -51,13 +52,15 @@ void handleRoot()
 
 void handleOn()
 {
-  digitalWrite(ledPin, HIGH);
+  digitalWrite(RledPin, HIGH);
+  digitalWrite(GledPin, HIGH);
   server.send(200, "text/html", htmlPage());
 }
 
 void handleOff()
 {
-  digitalWrite(ledPin, LOW);
+  digitalWrite(RledPin, LOW);
+  digitalWrite(GledPin, LOW);
   server.send(200, "text/html", htmlPage());
 }
 
@@ -65,7 +68,8 @@ void setup()
 {
   Serial.begin(115200);
 
-  pinMode(ledPin, OUTPUT);
+  pinMode(RledPin, OUTPUT);
+  pinMode(GledPin, OUTPUT);
 
   // Start Access Point
   WiFi.softAP(ssid, password);

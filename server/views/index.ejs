@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electric Grid Control</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+    <div class="page-shell">
+        <div class="energy-orb orb-one"></div>
+        <div class="energy-orb orb-two"></div>
+        <div class="grid-lines"></div>
+
+        <main class="dashboard">
+            <section class="hero-card">
+                <div class="eyebrow">
+                    <span class="eyebrow-dot"></span>
+                    Live electricity automation
+                </div>
+
+                <div class="hero-copy">
+                    <p class="kicker">ESP32 Energy Hub</p>
+                    <h1>Control your power flow with a high-voltage dashboard.</h1>
+                    <p class="hero-text">
+                        Switch your connected device instantly, monitor the current activity state,
+                        and enjoy a UI built to feel like a smart electrical command center.
+                    </p>
+                </div>
+
+                <div class="hero-stats">
+                    <article class="stat-card">
+                        <span class="stat-label">Signal</span>
+                        <strong>Stable</strong>
+                    </article>
+                    <article class="stat-card">
+                        <span class="stat-label">Response</span>
+                        <strong>Real-time</strong>
+                    </article>
+                    <article class="stat-card">
+                        <span class="stat-label">Mode</span>
+                        <strong>Remote Relay</strong>
+                    </article>
+                </div>
+            </section>
+
+            <section class="control-card" aria-labelledby="control-title">
+                <div class="control-header">
+                    <div>
+                        <p class="kicker">Power Control</p>
+                        <h2 id="control-title">Electricity output</h2>
+                    </div>
+                    <div class="live-chip">
+                        <span class="live-dot"></span>
+                        Grid online
+                    </div>
+                </div>
+
+                <div class="meter-wrap">
+                    <div class="meter" aria-hidden="true">
+                        <div class="meter-core"></div>
+                        <div class="meter-ring"></div>
+                        <div class="meter-ring meter-ring-delayed"></div>
+                        <div class="bolt">⚡</div>
+                    </div>
+
+                    <div class="status-panel">
+                        <p class="status-label">Current state</p>
+                        <h3 id="powerState" class="status-state">Standby</h3>
+                        <p id="statusMessage" class="status-message">
+                            Select a command to energize or cut off the connected output.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="control-actions">
+                    <a class="power-button power-on" href="/on" data-state="on">
+                        <span class="button-text">Turn Power On</span>
+                    </a>
+
+                    <a class="power-button power-off" href="/off" data-state="off">
+                        <span class="button-text">Turn Power Off</span>
+                    </a>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const stateLabel = document.getElementById("powerState");
+        const statusMessage = document.getElementById("statusMessage");
+        const buttons = document.querySelectorAll(".power-button");
+        const pageShell = document.querySelector(".page-shell");
+
+        const copy = {
+            on: {
+                title: "Power On",
+                detail: "Energy flow enabled. The connected device should now be active."
+            },
+            off: {
+                title: "Power Off",
+                detail: "Circuit paused. The connected device should now be inactive."
+            },
+            standby: {
+                title: "Standby",
+                detail: "Select a command to energize or cut off the connected output."
+            }
+        };
+
+        const applyState = (state) => {
+            const next = copy[state] || copy.standby;
+            stateLabel.textContent = next.title;
+            statusMessage.textContent = next.detail;
+            pageShell.dataset.powerState = state;
+        };
+
+        const savedState = localStorage.getItem("esp-power-state") || "standby";
+        applyState(savedState);
+
+        buttons.forEach((button) => {
+            button.addEventListener("click", async (event) => {
+                event.preventDefault();
+
+                const nextState = button.dataset.state;
+                const targetUrl = button.getAttribute("href");
+
+                button.classList.add("is-busy");
+                button.setAttribute("aria-disabled", "true");
+                statusMessage.textContent = "Sending signal to the ESP32 controller...";
+
+                try {
+                    const response = await fetch(targetUrl, {
+                        method: "GET",
+                        headers: { "X-Requested-With": "fetch" }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error("Request failed");
+                    }
+
+                    localStorage.setItem("esp-power-state", nextState);
+                    applyState(nextState);
+                } catch (error) {
+                    statusMessage.textContent = "Signal failed. Check the ESP32 connection and try again.";
+                } finally {
+                    button.classList.remove("is-busy");
+                    button.removeAttribute("aria-disabled");
+                }
+            });
+        });
+
+    </script>
+</body>
+
+</html>
