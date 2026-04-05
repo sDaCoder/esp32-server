@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESP32 Power Grid Control</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style1.css">
+</head>
+<body>
+    <div class="background-grid"></div>
+    <main class="panel">
+        <header class="panel-header">
+            <div class="status-indicator">
+                <div class="pulse-dot"></div>
+                <span class="status-text">SYSTEM ONLINE</span>
+            </div>
+            <h1 class="panel-title">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                GRID CONTROL
+            </h1>
+            <!-- <div class="voltage-readout">230<span>V</span> AC</div> -->
+        </header>
+
+        <div class="control-actions">
+            <a class="power-button power-on" href="/on" data-state="on">
+                <div class="button-inner">
+                    <svg class="icon icon-bolt" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                    <span class="button-text">ENGAGE POWER</span>
+                </div>
+                <div class="glitch-effect"></div>
+            </a>
+
+            <a class="power-button power-off" href="/off" data-state="off">
+                <div class="button-inner">
+                    <svg class="icon icon-power" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path><line x1="12" y1="2" x2="12" y2="12"></line></svg>
+                    <span class="button-text">ISOLATE CIRCUIT</span>
+                </div>
+                <div class="glitch-effect"></div>
+            </a>
+        </div>
+
+        <div class="data-stream">
+            <div class="data-bar"><div class="fill" style="width: 78%"></div></div>
+            <div class="data-label">CURRENT LOAD <span class="val">14.2A</span></div>
+        </div>
+    </main>
+</body>
+</html>
